@@ -3,13 +3,19 @@
 using UnityEngine.InputSystem;
 #endif
 
+public interface IPersonController
+{
+    public float VerticalVelocity { get; }
+	public bool IsGrounded { get; }
+}
+
 namespace StarterAssets
 {
 	[RequireComponent(typeof(CharacterController))]
 #if ENABLE_INPUT_SYSTEM
 	[RequireComponent(typeof(PlayerInput))]
 #endif
-	public class FirstPersonController : MonoBehaviour
+	public class FirstPersonController : MonoBehaviour, IPersonController
 	{
 		[Header("Player")]
 		[Tooltip("Move speed of the character in m/s")]
@@ -50,6 +56,8 @@ namespace StarterAssets
 		public float TopClamp = 90.0f;
 		[Tooltip("How far in degrees can you move the camera down")]
 		public float BottomClamp = -90.0f;
+		public float VerticalVelocity { get { return _verticalVelocity; } }
+		public bool IsGrounded {get {return Grounded;}}
 
 		// cinemachine
 		private float _cinemachineTargetPitch;
@@ -64,7 +72,7 @@ namespace StarterAssets
 		private float _jumpTimeoutDelta;
 		private float _fallTimeoutDelta;
 
-	
+
 #if ENABLE_INPUT_SYSTEM
 		private PlayerInput _playerInput;
 #endif
@@ -136,7 +144,7 @@ namespace StarterAssets
 			{
 				//Don't multiply mouse input by Time.deltaTime
 				float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
-				
+
 				_cinemachineTargetPitch += _input.look.y * RotationSpeed * deltaTimeMultiplier;
 				_rotationVelocity = _input.look.x * RotationSpeed * deltaTimeMultiplier;
 
