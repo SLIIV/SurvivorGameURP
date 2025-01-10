@@ -31,20 +31,6 @@ public class InventoryUI : MonoBehaviour
         InventoryInitialize();
     }
 
-    // private void Update()
-    // {
-    //     Dragging();
-    // }
-
-    // protected virtual void Dragging()
-    // {
-    //     if(_isDragging)
-    //     {
-    //         _draggingTransform.position = Input.mousePosition;
-    //     }
-    // }
-
-
     public virtual void InventoryInitialize()
     {
         _cellsGenerated = 0;
@@ -85,6 +71,17 @@ public class InventoryUI : MonoBehaviour
         GameObject itemObject = Instantiate(_item, _cellObjects[cellId].transform);
         itemObject.transform.localPosition = Vector2.zero;
         itemObject.GetComponent<ItemUIObject>().Image.sprite = Inventory.GetItemFromInventory(cellId).Sprite;
+        itemObject.GetComponent<ItemUIObject>().Count.text = Inventory.GetCountOfItem(cellId).ToString();
+    }
+
+    public void UpdateItemCount(int cellId)
+    {
+        Debug.Log(Inventory.GetCountOfItem(cellId).ToString());
+        if(Inventory.GetCountOfItem(cellId) > 1)
+        {
+            _cellObjects[cellId].GetComponentInChildren<ItemUIObject>().Count.gameObject.SetActive(true);
+        }
+        _cellObjects[cellId].GetComponentInChildren<ItemUIObject>().Count.text = Inventory.GetCountOfItem(cellId).ToString();
     }
 
     private bool CellHaveItems(IInventory inventory, IInventoryCell cell)
@@ -121,13 +118,14 @@ public class InventoryUI : MonoBehaviour
             {
                 _cellIsBusy = true;
                 _inventoryUIController.TempItem = Inventory.GetItemFromInventory(cell.Id);
+                _inventoryUIController.TempItemsCount = Inventory.GetCountOfItem(cell.Id);
                 Inventory.RemoveItemFromInvenory(cell.Id);
                 item.transform.SetParent(_inventoryUIController.transform);
             }
             _inventoryUIController.PlaceItem(inventoryClicked, cellObject, cell);
             if(_cellIsBusy)
             {
-                _inventoryUIController.TakeItem(item, _inventoryUIController.TempItem);
+                _inventoryUIController.TakeItem(item, _inventoryUIController.TempItem, _inventoryUIController.TempItemsCount);
                 _inventoryUIController.TempItem = null;
             }
         }
@@ -135,9 +133,11 @@ public class InventoryUI : MonoBehaviour
         {
             if(CellHaveItems(inventoryClicked, cell))
             {
-                GameObject item = GetItemObjectFromCell(cellObject);
-                _inventoryUIController.TakeItem(item, inventoryClicked.GetItemFromInventory(cell.Id));
-                item.transform.SetParent(_inventoryUIController.transform);
+                GameObject itemObject = GetItemObjectFromCell(cellObject);
+                Item item =inventoryClicked.GetItemFromInventory(cell.Id);
+                int itemCount = inventoryClicked.GetCountOfItem(cell.Id);
+                _inventoryUIController.TakeItem(itemObject, item, itemCount);
+                itemObject.transform.SetParent(_inventoryUIController.transform);
                 inventoryClicked.RemoveItemFromInvenory(cell.Id);
             }
         }

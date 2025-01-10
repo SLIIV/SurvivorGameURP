@@ -37,17 +37,38 @@ public class ItemPickup : MonoBehaviour
         Ray ray = _camera.ScreenPointToRay(_screenCenter);
         if(Physics.Raycast(ray, out RaycastHit hit, _pickupDistance, _layer))
         {
-            if(_hands.IsFree())
+            Item itemInfo = hit.transform.GetComponent<IItem>().ItemInfo;
+            if(_hands.IsFree() || _hands.IsItemUnstack(itemInfo))
             {
                 int freeCellIndex = _hands.GetFreeCell();
-                _hands.AddItemToInventory(freeCellIndex, hit.transform.GetComponent<IItem>().ItemInfo);
-                _handsUI.InitializeItem(freeCellIndex);
+
+                if(_hands.IsItemUnstack(itemInfo))
+                {
+                    int itemIndex = _hands.GetFirstUnstackItem(itemInfo);
+                    _hands.AddToStack(itemIndex, 1);
+                    _handsUI.UpdateItemCount(itemIndex);
+                }
+                else
+                {
+                    _hands.AddItemToInventory(freeCellIndex, itemInfo);
+                    _handsUI.InitializeItem(freeCellIndex);
+                }
             }
-            else if(_inventory.IsFree())
+            else if(_inventory.IsFree() || _inventory.IsItemUnstack(itemInfo))
             {
                 int freeCellIndex = _inventory.GetFreeCell();
-                _inventory.AddItemToInventory(freeCellIndex, hit.transform.GetComponent<IItem>().ItemInfo);
-                _playerInventoryUI.InitializeItem(freeCellIndex);
+                if(_inventory.IsItemUnstack(itemInfo))
+                {
+                    int itemIndex = _inventory.GetFirstUnstackItem(itemInfo);
+                    _inventory.AddToStack(itemIndex, 1);
+                    _playerInventoryUI.UpdateItemCount(itemIndex);
+                }
+                else
+                {
+                    _inventory.AddItemToInventory(freeCellIndex, itemInfo);
+                    _playerInventoryUI.InitializeItem(freeCellIndex);
+                }
+
             }
         }
     }

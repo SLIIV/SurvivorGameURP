@@ -4,12 +4,6 @@ using UnityEngine;
 public class PlayerInventoryUI : InventoryUI
 {
 
-    private void Start()
-    {
-        //InventoryInitialize();
-    }
-
-
     public override void InventoryInitialize()
     {
         Inventory = PlayerInventory.GetComponent<IPlayerInventory>();
