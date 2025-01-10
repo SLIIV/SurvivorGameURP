@@ -10,6 +10,7 @@ namespace StarterAssets
 	{
 		public bool CursorLocked {get; set;}
 		public bool CursorInputForLook {get; set; }
+		public bool Pickup {get; set;}
 	}
 
 	public interface IPlayersUIInput
@@ -21,6 +22,7 @@ namespace StarterAssets
 		public bool CursorLocked { get { return cursorLocked; } set { cursorLocked = value; } }
 		public bool CursorInputForLook { get { return cursorInputForLook; } set { cursorInputForLook = value; } }
 		public bool Inventory {get { return inventory; } }
+		public bool Pickup {get {return pickup; } set { pickup = value; } }
 
 		[Header("Character Input Values")]
 		public Vector2 move;
@@ -40,6 +42,7 @@ namespace StarterAssets
 
 		[Header("Inventory")]
 		public bool inventory = false;
+		public bool pickup = false;
 #if ENABLE_INPUT_SYSTEM
 
 		public void OnMove(InputValue value)
@@ -57,6 +60,11 @@ namespace StarterAssets
 			{
 				LookInput(Vector2.zero);
 			}
+		}
+
+		public void OnPickup(InputValue value)
+		{
+			PickupInput(value.isPressed);
 		}
 
 		public void OnJump(InputValue value)
@@ -129,10 +137,14 @@ namespace StarterAssets
 			}
 		}
 
+		public void PickupInput(bool newState)
+		{
+			pickup = newState;
+		}
+
 		private void OnApplicationFocus(bool hasFocus)
 		{
 			SetCursorState(cursorLocked);
-			Debug.Log(hasFocus);
 		}
 		private void SetCursorState(bool newState)
 		{

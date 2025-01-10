@@ -4,4 +4,5 @@ using UnityEngine;
 public class ItemUIObject : MonoBehaviour
 {
     public Image Image;
+    public Text Count;
 }

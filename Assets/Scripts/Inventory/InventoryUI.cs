@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using StarterAssets;
 using Unity.Services.Multiplayer;
@@ -19,6 +20,7 @@ public class InventoryUI : MonoBehaviour
     private Vector2 _pointer;
     private int _cellsGenerated;
     private bool _isDragging = false;
+    private List<GameObject> _cellObjects = new List<GameObject>();
     // private Transform _draggingTransform;
     // private Item _draggingItem;
     private bool _cellIsBusy;
@@ -43,7 +45,7 @@ public class InventoryUI : MonoBehaviour
     // }
 
 
-    protected virtual void InventoryInitialize()
+    public virtual void InventoryInitialize()
     {
         _cellsGenerated = 0;
         _pointer = Vector2.zero;
@@ -53,6 +55,7 @@ public class InventoryUI : MonoBehaviour
             {
                 GameObject cell = Instantiate(_cell, _cellsParent);
                 IInventoryCell inventoryCell = cell.GetComponent<IInventoryCell>();
+                _cellObjects.Add(cell);
                 inventoryCell.Id = _cellsGenerated;
                 cell.GetComponent<Button>().onClick.AddListener(() => CellClick(cell));
                 if(CellHaveItems(Inventory, inventoryCell))
@@ -76,6 +79,12 @@ public class InventoryUI : MonoBehaviour
         GameObject itemObject = Instantiate(_item, cellObject.transform);
         itemObject.transform.localPosition = Vector2.zero;
         itemObject.GetComponent<ItemUIObject>().Image.sprite = Inventory.GetItemFromInventory(cell.Id).Sprite;
+    }
+    public void InitializeItem(int cellId)
+    {
+        GameObject itemObject = Instantiate(_item, _cellObjects[cellId].transform);
+        itemObject.transform.localPosition = Vector2.zero;
+        itemObject.GetComponent<ItemUIObject>().Image.sprite = Inventory.GetItemFromInventory(cellId).Sprite;
     }
 
     private bool CellHaveItems(IInventory inventory, IInventoryCell cell)

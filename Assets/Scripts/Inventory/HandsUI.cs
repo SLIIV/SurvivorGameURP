@@ -5,12 +5,13 @@ public class HandsUI : InventoryUI
 {
     private void Start()
     {
-        Inventory = PlayerInventory.GetComponent<IPlayerHandsInventory>();
-        InventoryInitialize();
+
+        //InventoryInitialize();
     }
 
-    protected override void InventoryInitialize()
+    public override void InventoryInitialize()
     {
+        Inventory = PlayerInventory.GetComponent<IPlayerHandsInventory>();
         base.InventoryInitialize();
     }
     protected override void CellClick(GameObject cellObject)

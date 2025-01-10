@@ -10,6 +10,8 @@ public interface IInventory
     public Item GetItemFromInventory(int index);
     public void RemoveItemFromInvenory(int index);
     public void AddItemToInventory(int index, Item item);
+    public bool IsFree();
+    public int GetFreeCell();
 }
 
 public class Inventory : MonoBehaviour, IInventory
@@ -58,6 +60,22 @@ public class Inventory : MonoBehaviour, IInventory
     public virtual void AddItemToInventory(int index, Item item)
     {
         _itemsInInventory[index] = item;
+    }
+
+    public bool IsFree()
+    {
+        return _itemsInInventory.Contains(null); //Содержит ли пустой слот
+    }
+    public int GetFreeCell()
+    {
+        for(int i = 0; i < _itemsInInventory.Count; i++)
+        {
+            if(_itemsInInventory[i] == null)
+            {
+                return i;
+            }
+        }
+        return 0;
     }
 
 }
